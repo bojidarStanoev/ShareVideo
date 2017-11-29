@@ -1,0 +1,37 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.5.2)
+      public_suffix (>= 2.0.2, < 4.0)
+    facebook-messenger (1.0.0)
+      httparty (~> 0.13, >= 0.13.7)
+      rack (>= 1.6.4)
+    google_custom_search_api (2.0.0)
+      addressable
+      httparty
+    httparty (0.15.6)
+      multi_xml (>= 0.5.2)
+    multi_xml (0.6.0)
+    mustermann (1.0.1)
+    public_suffix (3.0.1)
+    rack (2.0.3)
+    rack-protection (2.0.0)
+      rack
+    sinatra (2.0.0)
+      mustermann (~> 1.0)
+      rack (~> 2.0)
+      rack-protection (= 2.0.0)
+      tilt (~> 2.0)
+    tilt (2.0.8)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  facebook-messenger
+  google_custom_search_api
+  httparty
+  sinatra
+
+BUNDLED WITH
+   1.13.6
