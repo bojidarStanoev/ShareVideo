@@ -2,4 +2,5 @@ source 'https://rubygems.org'
 gem 'sinatra'
 gem 'facebook-messenger'
 gem 'httparty'
-gem "google_custom_search_api"
+gem 'google-api-client', '<0.9'
+gem 'trollop'
