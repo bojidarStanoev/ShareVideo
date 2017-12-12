@@ -4,3 +4,5 @@ gem 'facebook-messenger'
 gem 'httparty'
 gem 'google-api-client', '<0.9'
 gem 'trollop'
+
+gem 'sequel'
