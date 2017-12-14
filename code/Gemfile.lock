@@ -55,12 +55,14 @@ GEM
     multi_xml (0.6.0)
     multipart-post (2.0.0)
     mustermann (1.0.1)
+    mysql (2.9.1)
     os (0.9.6)
     public_suffix (3.0.1)
     rack (2.0.3)
     rack-protection (2.0.0)
       rack
     retriable (1.4.1)
+    sequel (5.3.0)
     signet (0.8.1)
       addressable (~> 2.3)
       faraday (~> 0.9)
@@ -84,6 +86,8 @@ DEPENDENCIES
   facebook-messenger
   google-api-client (< 0.9)
   httparty
+  mysql
+  sequel
   sinatra
   trollop
 

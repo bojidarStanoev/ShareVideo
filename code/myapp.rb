@@ -4,7 +4,7 @@ require 'sinatra'
 
 # Talk to Facebook
 get '/webhook' do 
- p params
+ puts params
   params['hub.challenge'] if ENV["VERIFY_TOKEN"] == params['hub.verify_token']
 end
 

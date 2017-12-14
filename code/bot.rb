@@ -4,6 +4,9 @@ require 'json' # and that one
 include Facebook::Messenger
 require 'google/api_client'
 require 'trollop'
+require 'sequel'
+DB = Sequel.connect(adapter: :'mysql', database: 'shareVideo', host: 'localhost', user: 'root', password: 'root')
+require './models/user'
 # NOTE: ENV variables should be set directly in terminal for testing on localhost
 
 # Subcribe bot to your page
@@ -14,11 +17,14 @@ YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
 
 hello_init=["hi","hello","zdr"]
+BotUsers.unrestrict_primary_key
 
+ 
 
 Bot.on :message do |message|
-  puts "Received '#{message.inspect}' from #{message.sender}" # debug purposes
-  
+  #puts "Received '#{message.inspect}' from #{message.sender}" # debug purposes
+  BotUsers.find_or_create(id: message.sender["id"])
+ 
   normal_msg = normalize(message)
   puts normal_msg
   if(hello_init.include?(normal_msg))
