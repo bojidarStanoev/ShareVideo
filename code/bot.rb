@@ -7,6 +7,7 @@ require 'trollop'
 require 'sequel'
 DB = Sequel.connect(adapter: :'mysql', database: 'shareVideo', host: 'localhost', user: 'root', password: 'root')
 require './models/user'
+require './models/message'
 # NOTE: ENV variables should be set directly in terminal for testing on localhost
 
 # Subcribe bot to your page
@@ -24,9 +25,11 @@ BotUsers.unrestrict_primary_key
 Bot.on :message do |message|
   #puts "Received '#{message.inspect}' from #{message.sender}" # debug purposes
   BotUsers.find_or_create(id: message.sender["id"])
- 
+
   normal_msg = normalize(message)
   puts normal_msg
+   UserMessages.create(text: normal_msg)
+   puts UserMessages.columns
   if(hello_init.include?(normal_msg))
 
     message.reply(text: "Hello")

@@ -1,6 +1,6 @@
 require'sequel'
 require'mysql'
 
-class Message < Sequel::Model
+class UserMessages < Sequel::Model
   
 end
