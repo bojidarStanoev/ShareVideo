@@ -5,9 +5,7 @@ include Facebook::Messenger
 require 'google/api_client'
 require 'trollop'
 require 'sequel'
-DB = Sequel.connect(adapter: :'mysql', database: 'shareVideo', host: 'localhost', user: 'root', password: 'root')
-require './models/user'
-require './models/message'
+#DB = Sequel.connect(adapter: :'mysql', database: 'shareVideo', host: 'localhost', user: 'root', password: 'root')
 # NOTE: ENV variables should be set directly in terminal for testing on localhost
 
 # Subcribe bot to your page
@@ -18,18 +16,18 @@ YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
 
 hello_init=["hi","hello","zdr"]
-BotUsers.unrestrict_primary_key
+User.unrestrict_primary_key
 
  
 
 Bot.on :message do |message|
-  #puts "Received '#{message.inspect}' from #{message.sender}" # debug purposes
-  BotUsers.find_or_create(id: message.sender["id"])
+  puts "Received '#{message.inspect}' from #{message.sender}" # debug purposes
+  User.find_or_create(id: message.sender["id"])
 
   normal_msg = normalize(message)
   puts normal_msg
-   UserMessages.create(text: normal_msg)
-   puts UserMessages.columns
+   #UserMessages.create(text: normal_msg)
+   #puts UserMessages.columns
   if(hello_init.include?(normal_msg))
 
     message.reply(text: "Hello")
@@ -60,6 +58,10 @@ Bot.on :message do |message|
   end
   
 end
+Bot.on :message_echo do |message_echo|
+  puts     message_echo.text 
+
+  end
 
 
 def normalize(message)
@@ -99,9 +101,7 @@ def  find_video(search)
 
     videos = []
 
-    # Add each result to the appropriate list, and then display the lists of
-    # matching videos, channels, and playlists.
-    search_response.data.items.each do |search_result|
+       search_response.data.items.each do |search_result|
       case search_result.id.kind
         when 'youtube#video'
           videos << "https://www.youtube.com/watch?v=" + "#{search_result.id.videoId}"

@@ -1,4 +1,6 @@
 require 'sinatra'
+require 'rubygems'
+require './config/init.rb'
 
 # NOTE: ENV variables should be set directly in terminal for testing on localhost
 
@@ -9,5 +11,5 @@ get '/webhook' do
 end
 
 get "/" do
-  "Nothing to see here"
+  User.first.to_json
 end

@@ -1,6 +1,6 @@
-require'sequel'
-require'mysql'
+#require'sequel'
+#require'mysql'
 
-class UserMessages < Sequel::Model
+#class UserMessages < Sequel::Model
   
-end
+#end

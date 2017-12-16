@@ -1,6 +1,5 @@
 require'sequel'
-require'mysql'
 
-class BotUsers < Sequel::Model
+class User < Sequel::Model
   
 end
