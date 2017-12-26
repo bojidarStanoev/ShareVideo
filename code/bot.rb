@@ -16,6 +16,7 @@ YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
 
 hello_init=["hi","hello","zdr"]
+search_random=["searchrnd","srcrnd","searchrandom"]
 User.unrestrict_primary_key
 
  
@@ -28,13 +29,13 @@ Bot.on :message do |message|
   puts normal_msg
    #UserMessages.create(text: normal_msg)
    #puts UserMessages.columns
-  if(hello_init.include?(normal_msg))
+  if hello_init.include?(normal_msg)
 
     message.reply(text: "Hello")
   
   elsif normal_msg.split(' ').first == "search"
     search = normal_msg.split(' ')[1..-1].join(' ')
-      get_search_res=find_video(search).first
+      get_search_res=find_video(search,false).first
       puts get_search_res
        message.reply(
   attachment: {
@@ -46,11 +47,28 @@ Bot.on :message do |message|
                            "url": binding.local_variable_get("get_search_res")
                        }
                    ]
+     }
     }
-  }
-)
+  )
      
-    
+    elsif search_random.include?(normal_msg.split(' ').first)
+      search = normal_msg.split(' ')[1..-1].join(' ')
+      get_search_res=find_video(search,true)
+      puts get_search_res=get_search_res[Random.rand(0...14)]
+      message.reply(
+  attachment: {
+    "type": "template",
+    "payload": {
+      "template_type": "open_graph",
+                   "elements": [
+                       {
+                           "url": binding.local_variable_get("get_search_res")
+                       }
+                   ]
+     }
+    }
+  )
+
   else
     
     message.reply(text: "i cant understand")
@@ -82,11 +100,17 @@ end
 
 
 
-def  find_video(search)
+def  find_video(search,random_or_not)
 
+  if(random_or_not== true)
+    max_res=15
+
+  else
+    max_res = 2
+  end
   opts = Trollop::options do
     opt :q, 'Search term', :type => String, :default => search
-    opt :max_results, 'Max results', :type => :int, :default => 2
+    opt :max_results, 'Max results', :type => :int, :default => max_res
   end
   client, youtube = get_service
 
