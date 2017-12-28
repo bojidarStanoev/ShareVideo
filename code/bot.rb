@@ -15,20 +15,34 @@ DEVELOPER_KEY = 'AIzaSyAk0bdRE1Uw3O07roXwWBZyStsM-TXmkVA'
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
 
-hello_init=["hi","hello","zdr"]
-search_random=["searchrnd","srcrnd","searchrandom"]
+hello_init = ["hi","hello","zdr"]
+search_random = ["searchrnd","srcrnd","searchrandom"]
+session_mes = []
 User.unrestrict_primary_key
-
+session = Session.new
+last_send = Time.new
+last_id=0
+date=0
  
 
 Bot.on :message do |message|
-  puts "Received '#{message.inspect}' from #{message.sender}" # debug purposes
+  puts "Received '#{message.inspect}' from #{message.sender}"
+  puts session_mes
+   if(Time.new > last_send+60)
+    session.set(user_id: last_id)
+    session.set(date: date)
+    session.set(message_id: session_mes)
+    session.save_changes
+    session = Session.new
+    session_mes = []
+  end
   User.find_or_create(id: message.sender["id"])
 
   normal_msg = normalize(message)
   puts normal_msg
-   #UserMessages.create(text: normal_msg)
-   #puts UserMessages.columns
+   mes = Message.create(text: normal_msg)
+   session_mes << mes.id
+   
   if hello_init.include?(normal_msg)
 
     message.reply(text: "Hello")
@@ -53,7 +67,7 @@ Bot.on :message do |message|
      
     elsif search_random.include?(normal_msg.split(' ').first)
       search = normal_msg.split(' ')[1..-1].join(' ')
-      get_search_res=find_video(search,true)
+      get_search_res = find_video(search,true)
       puts get_search_res=get_search_res[Random.rand(0...14)]
       message.reply(
   attachment: {
@@ -74,12 +88,10 @@ Bot.on :message do |message|
     message.reply(text: "i cant understand")
  
   end
-  
+  date = message.sent_at
+  last_id = message.sender["id"]
+  last_send = Time.new
 end
-Bot.on :message_echo do |message_echo|
-  puts     message_echo.text 
-
-  end
 
 
 def normalize(message)
