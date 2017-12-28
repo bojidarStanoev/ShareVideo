@@ -1,8 +1,10 @@
 
 
-migration "create the Users,Messages and Sessions table" do
-	#database.drop_table(:users)
-	#database.drop_table(:messages)
+migration "create the Users,Messages and join table messsages_users" do
+	database.drop_table(:users)
+	database.drop_table(:messages)
+	database.drop_table(:messages_users)
+	
   database.create_table :users do
     primary_key :id
   end
@@ -10,10 +12,10 @@ migration "create the Users,Messages and Sessions table" do
     primary_key :id
     string      :text
   end
-   database.create_table :sessions do
+   database.create_table :messages_users do
     primary_key :id
-    int      :user_id
+    foreign_key :user_id, :users 
     string     :date
-    array   :message_id
+    foreign_key  :message_id, :messages
   end
 end

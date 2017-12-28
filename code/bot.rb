@@ -19,7 +19,7 @@ hello_init = ["hi","hello","zdr"]
 search_random = ["searchrnd","srcrnd","searchrandom"]
 session_mes = []
 User.unrestrict_primary_key
-session = Session.new
+
 last_send = Time.new
 last_id=0
 date=0
@@ -29,19 +29,14 @@ Bot.on :message do |message|
   puts "Received '#{message.inspect}' from #{message.sender}"
   puts session_mes
    if(Time.new > last_send+60)
-    session.set(user_id: last_id)
-    session.set(date: date)
-    session.set(message_id: session_mes)
-    session.save_changes
-    session = Session.new
-    session_mes = []
-  end
-  User.find_or_create(id: message.sender["id"])
+      #do some stuff if session is a must
+     end
+  usr = User.find_or_create(id: message.sender["id"])
 
   normal_msg = normalize(message)
   puts normal_msg
    mes = Message.create(text: normal_msg)
-   session_mes << mes.id
+   usr.add_message(mes.id)
    
   if hello_init.include?(normal_msg)
 
