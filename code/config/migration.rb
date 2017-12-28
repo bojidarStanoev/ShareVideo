@@ -1,10 +1,10 @@
 
 
-migration "create the Users,Messages and join table messsages_users" do
-	database.drop_table(:users)
-	database.drop_table(:messages)
-	database.drop_table(:messages_users)
-	
+migration "create the Users,Messages,sessions and sessions_messages    " do
+	#database.drop_table(:messages)
+	#database.drop_table(:users)
+	#database.drop_table(:sessions)
+	#database.drop_table(:messages_sessions)
   database.create_table :users do
     primary_key :id
   end
@@ -12,10 +12,14 @@ migration "create the Users,Messages and join table messsages_users" do
     primary_key :id
     string      :text
   end
-   database.create_table :messages_users do
+  database.create_table :sessions do
     primary_key :id
-    foreign_key :user_id, :users 
-    string     :date
+    string      :date
+    int			:user_id
+  end
+   database.create_table :messages_sessions do
+    primary_key :id
+    foreign_key :session_id, :sessions 
     foreign_key  :message_id, :messages
   end
 end
