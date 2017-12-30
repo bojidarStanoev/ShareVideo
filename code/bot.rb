@@ -28,6 +28,8 @@ last_id=0
 Bot.on :message do |message|
   puts "Received '#{message.inspect}' from #{message.sender}"
   puts session_mes
+  #last session is saved and a new one is created when a message is received
+  #and 60 seconds have passed since the last one
    if(Time.new > last_send+60)
     session.save
     session= Session.create(date: message.sent_at)
