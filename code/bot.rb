@@ -17,6 +17,7 @@ YOUTUBE_API_VERSION = 'v3'
 
 hello_init = ["hi","hello","zdr"]
 search_random = ["searchrnd","srcrnd","searchrandom"]
+help = ["help?","?","help"]
 session_mes = []
 User.unrestrict_primary_key
 session=Session.create
@@ -24,7 +25,6 @@ last_send = Time.new
 last_id=0
 
  
-
 Bot.on :message do |message|
   puts "Received '#{message.inspect}' from #{message.sender}"
   puts session_mes
@@ -82,6 +82,10 @@ Bot.on :message do |message|
      }
     }
   )
+
+  elsif help.include?(normal_msg)
+    message.reply(text: "search keyword => does a Youtube search with the given keyword 
+      searchrnd,searchrandom,srcrnd keyword => gives you a random video based on the keyword")
 
   else
     
