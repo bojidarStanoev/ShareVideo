@@ -1,6 +1,6 @@
 require 'facebook/messenger'
-require 'httparty' # you should require this one
-require 'json' # and that one
+require 'httparty' 
+require 'json'
 include Facebook::Messenger
 require 'google/api_client'
 require 'trollop'
@@ -44,7 +44,7 @@ Bot.on :message do |message|
    session.add_message(mes.id)
    
   if hello_init.include?(normal_msg)
-
+    puts get_trending()
     message.reply(text: "Hello")
   
   elsif normal_msg.split(' ').first == "search"
@@ -150,4 +150,28 @@ def  find_video(search,random_or_not)
     end
 
    return videos 
+end
+
+def get_trending
+
+client,youtube = get_service
+
+search_response = client.execute!(
+      :api_method => youtube.videos.list,
+      :parameters => {
+        :part => 'snippet',
+        :chart => 'mostPopular',
+        :regionCode => 'US',
+        :maxResults => '20'
+      }
+    )
+
+trending = []
+
+  search_response.data.items.each do |trending_res|
+      
+          trending << "https://www.youtube.com/watch?v=" + "#{trending_res.id}"        
+  end
+
+    return trending
 end
