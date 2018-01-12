@@ -89,27 +89,54 @@ Bot.on :message do |message|
 
   elsif normal_msg.split(' ').first == "mostpopular"
        
-       if(normal_msg.split(' ')[1] == nil  || normal_msg.split(' ')[1].to_i < 1 )
+       if normal_msg.split(' ')[1] == nil  || normal_msg.split(' ')[1].to_i < 1 
 
          message.reply(text: "wrong input for mostpopular")
 
-       else
-           song_number = normal_msg.split(' ')[1].to_i
-            most_popular = get_most_popular()[song_number-1]
-            message.reply(
-                attachment: {
-                  "type": "template",
-                    "payload": {
-                      "template_type": "open_graph",
-                             "elements": [
-                                 {
-                                     "url": binding.local_variable_get("most_popular")
-                                 }
-                             ]
-                    }
-                } 
-            ) 
-        end
+        else
+         
+            if normal_msg.split(' ')[2] == "to" && normal_msg.split(' ')[3].to_i != nil && normal_msg.split(' ')[3].to_i > 1 && normal_msg.split(' ')[3].to_i < 20
+              starting_video = normal_msg.split(' ')[1].to_i - 1
+              ending_video = normal_msg.split(' ')[3].to_i - 1
+              most_popular_arr = get_most_popular()
+
+                (starting_video.to_i..ending_video.to_i).each do |i|
+                  return_video = most_popular_arr[i]
+                  message.reply(
+                    attachment: {
+                      "type": "template",
+                        "payload": {
+                          "template_type": "open_graph",
+                                 "elements": [
+                                     {
+                                         "url": binding.local_variable_get("return_video")
+                                     }
+                                 ]
+                        }
+                    } 
+                ) 
+                end            
+            
+              else
+           
+             song_number = normal_msg.split(' ')[1].to_i
+              most_popular = get_most_popular()[song_number-1]
+              message.reply(
+                  attachment: {
+                    "type": "template",
+                      "payload": {
+                        "template_type": "open_graph",
+                               "elements": [
+                                   {
+                                       "url": binding.local_variable_get("most_popular")
+                                   }
+                               ]
+                      }
+                  } 
+              ) 
+            end
+        end  
+        
   else 
     
     message.reply(text: "i cant understand")
@@ -189,12 +216,12 @@ search_response = client.execute!(
       }
     )
 
-trending = []
+mostpopular = []
 
-  search_response.data.items.each do |trending_res|
+  search_response.data.items.each do |popular_res|
       
-          trending << "https://www.youtube.com/watch?v=" + "#{trending_res.id}"        
+          mostpopular << "https://www.youtube.com/watch?v=" + "#{popular_res.id}"        
   end
 
-    return trending
+    return mostpopular
 end
