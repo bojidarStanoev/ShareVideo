@@ -44,12 +44,12 @@ Bot.on :message do |message|
    session.add_message(mes.id)
    
   if hello_init.include?(normal_msg)
-    puts get_trending()
+    
     message.reply(text: "Hello")
   
   elsif normal_msg.split(' ').first == "search"
     search = normal_msg.split(' ')[1..-1].join(' ')
-      get_search_res=find_video(search,false).first
+      get_search_res = find_video(search,false).first
       puts get_search_res
        message.reply(
   attachment: {
@@ -68,7 +68,7 @@ Bot.on :message do |message|
     elsif search_random.include?(normal_msg.split(' ').first)
       search = normal_msg.split(' ')[1..-1].join(' ')
       get_search_res = find_video(search,true)
-      puts get_search_res=get_search_res[Random.rand(0...14)]
+      puts get_search_res = get_search_res[Random.rand(0...14)]
       message.reply(
   attachment: {
     "type": "template",
@@ -87,7 +87,30 @@ Bot.on :message do |message|
     message.reply(text: "search keyword => does a Youtube search with the given keyword 
       searchrnd,searchrandom,srcrnd keyword => gives you a random video based on the keyword")
 
-  else
+  elsif normal_msg.split(' ').first == "mostpopular"
+       
+       if(normal_msg.split(' ')[1] == nil  || normal_msg.split(' ')[1].to_i < 1 )
+
+         message.reply(text: "wrong input for mostpopular")
+
+       else
+           song_number = normal_msg.split(' ')[1].to_i
+            most_popular = get_most_popular()[song_number-1]
+            message.reply(
+                attachment: {
+                  "type": "template",
+                    "payload": {
+                      "template_type": "open_graph",
+                             "elements": [
+                                 {
+                                     "url": binding.local_variable_get("most_popular")
+                                 }
+                             ]
+                    }
+                } 
+            ) 
+        end
+  else 
     
     message.reply(text: "i cant understand")
  
@@ -152,7 +175,7 @@ def  find_video(search,random_or_not)
    return videos 
 end
 
-def get_trending
+def get_most_popular
 
 client,youtube = get_service
 
