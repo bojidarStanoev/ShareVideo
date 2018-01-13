@@ -1,11 +1,12 @@
 require 'facebook/messenger'
 require 'httparty' 
 require 'json'
+require 'time'
 include Facebook::Messenger
 require 'google/api_client'
 require 'trollop'
 require 'sequel'
-#DB = Sequel.connect(adapter: :'mysql', database: 'shareVideo', host: 'localhost', user: 'root', password: 'root')
+
 # NOTE: ENV variables should be set directly in terminal for testing on localhost
 
 # Subcribe bot to your page
@@ -21,36 +22,33 @@ search_random = ["searchrnd","srcrnd","searchrandom"]
 help = ["help?","?","help"]
 session_mes = []
 User.unrestrict_primary_key
-session=Session.create
-last_send = Time.new
-last_id = 0
+session = Session.create(date: Time.new)
+session.add_message(Message.create("text": "starting sessions", date: Time.new).id)
+session.save
 
-#curl -X GET "https://graph.facebook.com/v2.6/1801616423213664?fields=first_name,last_name,profile_pic&access_token=EAAELGMFbNQIBALuMYcHX9ZB4gxhLAX2qMmd4Xdq0MCTiny02ghiH3ZBYtPPqOc3ZAjNXb8Rs7zvUHJ4itHEBa6mDXd8fR5JT1oFtvwy^Ck0hHVRqwRfXuUEYyH5YD19XmN8PdX8E6UxVdPZC9YQhITiitaZAb80RM2ENrUoRquwZDZD
+
+
 
  
 Bot.on :message do |message|
   puts "Received '#{message.inspect}' from #{message.sender}"
   puts session_mes
+    last_mes = session.messages_dataset.order(:date).last
 
-  p "\n"
-  #puts Facebook::Messenger::Profile.get("https://graph.facebook.com/v2.6/#{message.sender['id']}?fields=locale,first_name,last_name&access_token=#{FB_TOKEN}") 
-  p "\n"
-
-
-  #last session is saved and a new one is created when a message is received
-  #and 60 seconds have passed since the last one
-   if(Time.new > last_send+60)
+   if(Time.new - Time.parse(last_mes.date) > 120)
     session.save
     session = Session.create(date: message.sent_at)
+    session.set(user_id: message.sender["id"])
   end
-
-  puts User.find_or_create(id: message.sender["id"],  first_name: get_user_data(message.sender["id"])["first_name"], last_name: get_user_data(message.sender["id"])["last_name"],  locale: get_user_data(message.sender["id"])["locale"])
+ 
+   User.find_or_create(id: message.sender["id"],  first_name: get_user_data(message.sender["id"])["first_name"], last_name: get_user_data(message.sender["id"])["last_name"],  locale: get_user_data(message.sender["id"])["locale"])
   session.set(user_id: message.sender["id"])
   normal_msg = normalize(message)
 
   puts normal_msg
+  
    mes = Message.create("text": normal_msg, date: message.sent_at)
-
+ 
    session.add_message(mes.id)
    
   if hello_init.include?(normal_msg)
@@ -153,8 +151,7 @@ Bot.on :message do |message|
  
   end
   
-  last_id = message.sender["id"]
-  last_send = Time.new
+  
 end
 
 
