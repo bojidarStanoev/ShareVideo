@@ -14,6 +14,7 @@ Facebook::Messenger::Subscriptions.subscribe(access_token: ENV["ACCESS_TOKEN"])
 DEVELOPER_KEY = 'AIzaSyAk0bdRE1Uw3O07roXwWBZyStsM-TXmkVA'
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
+FB_TOKEN = 'EAAELGMFbNQIBALuMYcHX9ZB4gxhLAX2qMmd4Xdq0MCTiny02ghiH3ZBYtPPqOc3ZAjNXb8Rs7zvUHJ4itHEBa6mDXd8fR5JT1oFtvwyXak0hHVRqwRfXuUEYyH5YD19XmN8PdX8E6UxVdPZC9YQhITiitaZAb80RM2ENrUoRquwZDZD'
 
 hello_init = ["hi","hello","zdr"]
 search_random = ["searchrnd","srcrnd","searchrandom"]
@@ -22,24 +23,33 @@ session_mes = []
 User.unrestrict_primary_key
 session=Session.create
 last_send = Time.new
-last_id=0
+last_id = 0
+
+#curl -X GET "https://graph.facebook.com/v2.6/1801616423213664?fields=first_name,last_name,profile_pic&access_token=EAAELGMFbNQIBALuMYcHX9ZB4gxhLAX2qMmd4Xdq0MCTiny02ghiH3ZBYtPPqOc3ZAjNXb8Rs7zvUHJ4itHEBa6mDXd8fR5JT1oFtvwy^Ck0hHVRqwRfXuUEYyH5YD19XmN8PdX8E6UxVdPZC9YQhITiitaZAb80RM2ENrUoRquwZDZD
 
  
 Bot.on :message do |message|
   puts "Received '#{message.inspect}' from #{message.sender}"
   puts session_mes
+
+  p "\n"
+  #puts Facebook::Messenger::Profile.get("https://graph.facebook.com/v2.6/#{message.sender['id']}?fields=locale,first_name,last_name&access_token=#{FB_TOKEN}") 
+  p "\n"
+
+
   #last session is saved and a new one is created when a message is received
   #and 60 seconds have passed since the last one
    if(Time.new > last_send+60)
     session.save
-    session= Session.create(date: message.sent_at)
-     end
-  User.find_or_create(id: message.sender["id"])
+    session = Session.create(date: message.sent_at)
+  end
+
+  puts User.find_or_create(id: message.sender["id"],  first_name: get_user_data(message.sender["id"])["first_name"], last_name: get_user_data(message.sender["id"])["last_name"],  locale: get_user_data(message.sender["id"])["locale"])
   session.set(user_id: message.sender["id"])
   normal_msg = normalize(message)
 
   puts normal_msg
-   mes = Message.create(text: normal_msg)
+   mes = Message.create("text": normal_msg, date: message.sent_at)
 
    session.add_message(mes.id)
    
@@ -98,7 +108,7 @@ Bot.on :message do |message|
             if normal_msg.split(' ')[2] == "to" && normal_msg.split(' ')[3].to_i != nil && normal_msg.split(' ')[3].to_i > 1 && normal_msg.split(' ')[3].to_i < 20
               starting_video = normal_msg.split(' ')[1].to_i - 1
               ending_video = normal_msg.split(' ')[3].to_i - 1
-              most_popular_arr = get_most_popular()
+              most_popular_arr = get_most_popular(get_user_data(message.sender["id"])["locale"])
 
                 (starting_video.to_i..ending_video.to_i).each do |i|
                   return_video = most_popular_arr[i]
@@ -120,7 +130,7 @@ Bot.on :message do |message|
               else
            
              song_number = normal_msg.split(' ')[1].to_i
-              most_popular = get_most_popular()[song_number-1]
+              most_popular = get_most_popular(get_user_data(message.sender["id"])["locale"])[song_number-1]
               message.reply(
                   attachment: {
                     "type": "template",
@@ -202,16 +212,16 @@ def  find_video(search,random_or_not)
    return videos 
 end
 
-def get_most_popular
+def get_most_popular(region)
 
 client,youtube = get_service
-
+region = region.split("_")[1]
 search_response = client.execute!(
       :api_method => youtube.videos.list,
       :parameters => {
         :part => 'snippet',
         :chart => 'mostPopular',
-        :regionCode => 'US',
+        :regionCode => region,
         :maxResults => '20'
       }
     )
@@ -224,4 +234,9 @@ mostpopular = []
   end
 
     return mostpopular
+end
+
+def get_user_data(id)
+
+  return user_data = Facebook::Messenger::Profile.get("https://graph.facebook.com/v2.6/#{id}?fields=locale,first_name,last_name&access_token=#{FB_TOKEN}") 
 end
