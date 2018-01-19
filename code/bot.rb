@@ -6,6 +6,7 @@ include Facebook::Messenger
 require 'google/api_client'
 require 'trollop'
 require 'sequel'
+require_relative 'bot_commands_help'
 
 # NOTE: ENV variables should be set directly in terminal for testing on localhost
 
@@ -28,9 +29,12 @@ session.save
 
 
 
+  
 
- 
+  
+
 Bot.on :message do |message|
+
   puts "Received '#{message.inspect}' from #{message.sender}"
   puts session_mes
     last_mes = session.messages_dataset.order(:date).last
@@ -59,20 +63,18 @@ Bot.on :message do |message|
     search = normal_msg.split(' ')[1..-1].join(' ')
       get_search_res = find_video(search,false).first
       puts get_search_res
-       message.reply(
-  attachment: {
-    "type": "template",
-    "payload": {
-      "template_type": "open_graph",
-                   "elements": [
-                       {
-                           "url": binding.local_variable_get("get_search_res")
-                          
+       message.reply( attachment: {
+                      "type": "template",
+                        "payload": {
+                          "template_type": "open_graph",
+                                 "elements": [
+                                     {
+                                         "url": binding.local_variable_get("get_search_res")
+                                     }
+                                 ]
                         }
-                   ]
-     }
-    }
-  )
+                    }) 
+
      
     elsif search_random.include?(normal_msg.split(' ').first)
       search = normal_msg.split(' ')[1..-1].join(' ')
@@ -93,8 +95,7 @@ Bot.on :message do |message|
   )
 
   elsif help.include?(normal_msg)
-    message.reply(text: "search keyword => does a Youtube search with the given keyword 
-      searchrnd,searchrandom,srcrnd keyword => gives you a random video based on the keyword")
+    message.reply(text: BotCommandString.new.give_commands_string)
 
   elsif normal_msg.split(' ').first == "mostpopular"
        
@@ -238,3 +239,44 @@ def get_user_data(id)
 
   return user_data = Facebook::Messenger::Profile.get("https://graph.facebook.com/v2.6/#{id}?fields=locale,first_name,last_name&access_token=#{FB_TOKEN}") 
 end
+
+def set_consistent_menu
+  Facebook::Messenger::Profile.set({
+  persistent_menu: [
+    {
+      locale: 'default',
+      composer_input_disabled: false,
+      call_to_actions: [
+        {
+      type: 'postback',
+      title: 'Bot commands',
+      payload: 'Help'
+    }
+    
+    ]
+  }
+]
+}, access_token: ENV['ACCESS_TOKEN'])
+
+  Bot.on :postback do |postback|
+
+    if postback.payload == 'Help'
+      Bot.deliver({
+    recipient: {
+      id: postback.sender["id"]
+    },
+    message: {
+      text: BotCommandString.new.give_commands_string
+    }
+  }, access_token: ENV['ACCESS_TOKEN'])
+    end
+  end
+  
+end
+
+set_consistent_menu
+
+
+
+
+
