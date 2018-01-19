@@ -53,7 +53,7 @@ Bot.on :message do |message|
    
   if hello_init.include?(normal_msg)
     
-    message.reply(text: "Hello")
+    message.reply(text: "Hello " + "#{get_user_data(message.sender["id"])["first_name"]}")
   
   elsif normal_msg.split(' ').first == "search"
     search = normal_msg.split(' ')[1..-1].join(' ')
@@ -67,7 +67,8 @@ Bot.on :message do |message|
                    "elements": [
                        {
                            "url": binding.local_variable_get("get_search_res")
-                       }
+                          
+                        }
                    ]
      }
     }
