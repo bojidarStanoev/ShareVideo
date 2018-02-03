@@ -240,7 +240,7 @@ def get_user_data(id)
   return user_data = Facebook::Messenger::Profile.get("https://graph.facebook.com/v2.6/#{id}?fields=locale,first_name,last_name&access_token=#{FB_TOKEN}") 
 end
 
-def set_consistent_menu
+def set_getStarted_and_consistent_menu
   Facebook::Messenger::Profile.set({
   persistent_menu: [
     {
@@ -255,7 +255,10 @@ def set_consistent_menu
     
     ]
   }
-]
+],
+get_started: {
+    payload: 'GET_STARTED_PAYLOAD'
+  }
 }, access_token: ENV['ACCESS_TOKEN'])
 
   Bot.on :postback do |postback|
@@ -270,11 +273,22 @@ def set_consistent_menu
     }
   }, access_token: ENV['ACCESS_TOKEN'])
     end
+  if postback.payload == "GET_STARTED_PAYLOAD"
+    Bot.deliver({
+    recipient: {
+      id: postback.sender["id"]
+    },
+    message: {
+      text: "hello there " + "#{get_user_data(postback.sender["id"])["first_name"]}" + 
+       ". Im your personal Video sharing bot for more info type: help." 
+    }
+  }, access_token: ENV['ACCESS_TOKEN'])
+    end
   end
   
 end
 
-set_consistent_menu
+set_getStarted_and_consistent_menu
 
 
 
