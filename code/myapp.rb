@@ -10,6 +10,6 @@ get '/webhook' do
   params['hub.challenge'] if ENV["VERIFY_TOKEN"] == params['hub.verify_token']
 end
 
-get "/" do
-  User.first.to_json
+get "/extension" do
+  "Hello User!"
 end
