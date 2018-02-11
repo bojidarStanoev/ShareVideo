@@ -4,7 +4,6 @@ require 'json'
 require 'time'
 include Facebook::Messenger
 require 'google/api_client'
-require 'trollop'
 require 'sequel'
 require_relative 'bot_commands_help'
 
@@ -39,13 +38,13 @@ Bot.on :message do |message|
   puts session_mes
     last_mes = session.messages_dataset.order(:date).last
 
-   if(Time.new - Time.parse(last_mes.date) > 120)
+   if Time.new - Time.parse(last_mes.date) > 120 
     session.save
     session = Session.create(date: message.sent_at)
     session.set(user_id: message.sender["id"])
   end
  
-   User.find_or_create(id: message.sender["id"],  first_name: get_user_data(message.sender["id"])["first_name"], last_name: get_user_data(message.sender["id"])["last_name"],  locale: get_user_data(message.sender["id"])["locale"])
+   User.find_or_create(id: message.sender["id"], first_name: get_user_data(message.sender["id"])["first_name"], last_name: get_user_data(message.sender["id"])["last_name"],  locale: get_user_data(message.sender["id"])["locale"])
   session.set(user_id: message.sender["id"])
   normal_msg = normalize(message)
 
@@ -177,36 +176,34 @@ end
 
 def  find_video(search,random_or_not)
 
-  if(random_or_not== true)
-    max_res=15
+  if(random_or_not == true)
+    max_res = 15
 
   else
-    max_res = 2
+    max_res = 1
   end
-  opts = Trollop::options do
-    opt :q, 'Search term', :type => String, :default => search
-    opt :max_results, 'Max results', :type => :int, :default => max_res
-  end
+  
   client, youtube = get_service
 
   search_response = client.execute!(
       :api_method => youtube.search.list,
       :parameters => {
         :part => 'snippet',
-        :q => opts[:q],
-        :maxResults => opts[:max_results]
+        :q => search,
+        :type => 'video',
+        :maxResults => max_res
       }
     )
 
     videos = []
 
        search_response.data.items.each do |search_result|
-      case search_result.id.kind
-        when 'youtube#video'
+      
+        
           videos << "https://www.youtube.com/watch?v=" + "#{search_result.id.videoId}"
         
       end
-    end
+    
 
    return videos 
 end
