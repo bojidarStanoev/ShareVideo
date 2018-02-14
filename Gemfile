@@ -9,5 +9,5 @@ group :development do
   gem 'sqlite3'
 end
 group :production do
-  gem 'pg', '0.12.2'
+  gem 'pg', '0.15.0'
 end
