@@ -1,5 +1,4 @@
-require 'facebook/messenger'
-require 'httparty' 
+require 'facebook/messenger' 
 require 'json'
 require 'time'
 include Facebook::Messenger
