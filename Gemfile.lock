@@ -56,7 +56,6 @@ GEM
     multipart-post (2.0.0)
     mustermann (1.0.1)
     os (0.9.6)
-    pg (0.15.0)
     public_suffix (3.0.2)
     rack (2.0.4)
     rack-protection (2.0.0)
@@ -88,7 +87,6 @@ PLATFORMS
 DEPENDENCIES
   facebook-messenger
   google-api-client (< 0.9)
-  pg (= 0.15.0)
   sequel
   sinatra
   sinatra-sequel

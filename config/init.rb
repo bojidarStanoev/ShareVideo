@@ -1,5 +1,5 @@
 require 'sinatra/sequel'
-#require 'sqlite3'
+require 'sqlite3'
 
  
 configure :development do
@@ -8,7 +8,7 @@ end
 configure :test do
   set :database, 'sqlite3::memory:'
 end
- #require_relative 'migration'
+ 
  Dir["./db/migrations/**/*.rb"].each do |migration|
  	puts migration
   require migration
