@@ -34,14 +34,17 @@ session.save
 Bot.on :message do |message|
 
   puts "Received '#{message.inspect}' from #{message.sender}"
+
+  
+
   puts session_mes
-    last_mes = session.messages_dataset.order(:date).last
+  last_mes = session.messages_dataset.order(:date).last
 
    if Time.new - Time.parse(last_mes.date) > 120 
     session.save
     session = Session.create(date: message.sent_at)
     session.set(user_id: message.sender["id"])
-  end
+    end
  
    User.find_or_create(id: message.sender["id"], first_name: get_user_data(message.sender["id"])["first_name"], last_name: get_user_data(message.sender["id"])["last_name"],  locale: get_user_data(message.sender["id"])["locale"])
   session.set(user_id: message.sender["id"])
@@ -52,8 +55,11 @@ Bot.on :message do |message|
    mes = Message.create("text": normal_msg, date: message.sent_at)
  
    session.add_message(mes.id)
-   
-  if hello_init.include?(normal_msg)
+  if !is_text_message(message)
+
+    message.reply(text: "only send text please")
+  
+  elsif hello_init.include?(normal_msg)
     
     message.reply(text: "Hello " + "#{get_user_data(message.sender["id"])["first_name"]}")
   
@@ -146,17 +152,21 @@ Bot.on :message do |message|
         end  
         
   else 
-    
     message.reply(text: "i cant understand")
  
   end
-  
-  
+   
 end
 
 
 def normalize(message)
-  message = message.text.downcase
+  if is_text_message(message)
+    message = message.text.downcase
+  end
+end
+
+def is_text_message(message)
+  !message.text.nil?
 end
 
 def get_service
