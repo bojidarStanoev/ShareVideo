@@ -1,9 +1,11 @@
+require 'dotenv/load'
 require 'facebook/messenger' 
 require 'json'
 require 'time'
 include Facebook::Messenger
 require 'google/api_client'
 require 'sequel'
+
 require_relative 'bot_commands_help'
 
 # NOTE: ENV variables should be set directly in terminal for testing on localhost
@@ -14,7 +16,6 @@ Facebook::Messenger::Subscriptions.subscribe(access_token: ENV["ACCESS_TOKEN"])
 DEVELOPER_KEY = 'AIzaSyAk0bdRE1Uw3O07roXwWBZyStsM-TXmkVA'
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
-FB_TOKEN = 'EAAELGMFbNQIBALuMYcHX9ZB4gxhLAX2qMmd4Xdq0MCTiny02ghiH3ZBYtPPqOc3ZAjNXb8Rs7zvUHJ4itHEBa6mDXd8fR5JT1oFtvwyXak0hHVRqwRfXuUEYyH5YD19XmN8PdX8E6UxVdPZC9YQhITiitaZAb80RM2ENrUoRquwZDZD'
 
 hello_init = ["hi","hello","zdr"]
 search_random = ["searchrnd","srcrnd","searchrandom"]
@@ -243,7 +244,7 @@ end
 
 def get_user_data(id)
 
-  return user_data = Facebook::Messenger::Profile.get("https://graph.facebook.com/v2.6/#{id}?fields=locale,first_name,last_name&access_token=#{FB_TOKEN}") 
+  return user_data = Facebook::Messenger::Profile.get("https://graph.facebook.com/v2.6/#{id}?fields=locale,first_name,last_name&access_token=#{ ENV["ACCESS_TOKEN"]}") 
 end
 
 def set_getStarted_and_consistent_menu

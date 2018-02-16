@@ -13,6 +13,7 @@ GEM
       extlib (>= 0.9.15)
       multi_json (>= 1.0.0)
     concurrent-ruby (1.0.5)
+    dotenv (2.2.1)
     extlib (0.9.16)
     facebook-messenger (1.0.0)
       httparty (~> 0.13, >= 0.13.7)
@@ -85,6 +86,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  dotenv
   facebook-messenger
   google-api-client (< 0.9)
   sequel
