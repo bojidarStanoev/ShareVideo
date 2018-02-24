@@ -7,16 +7,13 @@ require 'google/api_client'
 require 'sequel'
 
 require_relative 'bot_commands_help'
+require_relative 'youtubeSearch'
 
 # NOTE: ENV variables should be set directly in terminal for testing on localhost
 
 # Subcribe bot to your page
 Facebook::Messenger::Subscriptions.subscribe(access_token: ENV["ACCESS_TOKEN"])
 # Set DEVELOPER_KEY to the API
-DEVELOPER_KEY = 'AIzaSyAk0bdRE1Uw3O07roXwWBZyStsM-TXmkVA'
-YOUTUBE_API_SERVICE_NAME = 'youtube'
-YOUTUBE_API_VERSION = 'v3'
-
 hello_init = ["hi","hello","zdr"]
 search_random = ["searchrnd","srcrnd","searchrandom"]
 help = ["help?","?","help"]
@@ -66,7 +63,7 @@ Bot.on :message do |message|
   
   elsif normal_msg.split(' ').first == "search"
     search = normal_msg.split(' ')[1..-1].join(' ')
-      get_search_res = find_video(search,false).first
+      get_search_res = SearchYoutube.new.find_video(search,false).first
       puts get_search_res
        message.reply( attachment: {
                       "type": "template",
@@ -84,7 +81,7 @@ Bot.on :message do |message|
     elsif search_random.include?(normal_msg.split(' ').first)
       search = normal_msg.split(' ')[1..-1].join(' ')
       get_search_res = find_video(search,true)
-      puts get_search_res = get_search_res[Random.rand(0...14)]
+      puts get_search_res = SearchYoutube.new.get_search_res[Random.rand(0...14)]
       message.reply(
   attachment: {
     "type": "template",
@@ -113,7 +110,7 @@ Bot.on :message do |message|
             if normal_msg.split(' ')[2] == "to" && normal_msg.split(' ')[3].to_i != nil && normal_msg.split(' ')[3].to_i > 1 && normal_msg.split(' ')[3].to_i < 20
               starting_video = normal_msg.split(' ')[1].to_i - 1
               ending_video = normal_msg.split(' ')[3].to_i - 1
-              most_popular_arr = get_most_popular(get_user_data(message.sender["id"])["locale"])
+              most_popular_arr = SearchYoutube.new.get_most_popular(get_user_data(message.sender["id"])["locale"])
 
                 (starting_video.to_i..ending_video.to_i).each do |i|
                   return_video = most_popular_arr[i]
@@ -135,7 +132,7 @@ Bot.on :message do |message|
               else
            
              song_number = normal_msg.split(' ')[1].to_i
-              most_popular = get_most_popular(get_user_data(message.sender["id"])["locale"])[song_number-1]
+              most_popular = SearchYoutube.new.get_most_popular(get_user_data(message.sender["id"])["locale"])[song_number-1]
               message.reply(
                   attachment: {
                     "type": "template",
@@ -170,77 +167,7 @@ def is_text_message(message)
   !message.text.nil?
 end
 
-def get_service
-  client = Google::APIClient.new(
-    :key => DEVELOPER_KEY,
-    :authorization => nil,
-    :application_name => $PROGRAM_NAME,
-    :application_version => '1.0.0'
-  )
-  youtube = client.discovered_api(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION)
 
-  return client, youtube
-end
-
-
-
-def  find_video(search,random_or_not)
-
-  if(random_or_not == true)
-    max_res = 15
-
-  else
-    max_res = 1
-  end
-  
-  client, youtube = get_service
-
-  search_response = client.execute!(
-      :api_method => youtube.search.list,
-      :parameters => {
-        :part => 'snippet',
-        :q => search,
-        :type => 'video',
-        :maxResults => max_res
-      }
-    )
-
-    videos = []
-
-       search_response.data.items.each do |search_result|
-      
-        
-          videos << "https://www.youtube.com/watch?v=" + "#{search_result.id.videoId}"
-        
-      end
-    
-
-   return videos 
-end
-
-def get_most_popular(region)
-
-client,youtube = get_service
-region = region.split("_")[1]
-search_response = client.execute!(
-      :api_method => youtube.videos.list,
-      :parameters => {
-        :part => 'snippet',
-        :chart => 'mostPopular',
-        :regionCode => region,
-        :maxResults => '20'
-      }
-    )
-
-mostpopular = []
-
-  search_response.data.items.each do |popular_res|
-      
-          mostpopular << "https://www.youtube.com/watch?v=" + "#{popular_res.id}"        
-  end
-
-    return mostpopular
-end
 
 def get_user_data(id)
 
