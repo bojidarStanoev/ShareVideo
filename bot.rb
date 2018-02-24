@@ -267,7 +267,7 @@ get_started: {
     payload: 'GET_STARTED_PAYLOAD'
   },
    "home_url": {
-     "url": "https://www.youtube.com",#change ngrok url on every computer start/restart + whitelist it on the FB app page
+     "url": "https://05cb23cc.ngrok.io/extension",#change ngrok url on every computer start/restart + whitelist it on the FB app page
      "webview_height_ratio": "tall",
      "webview_share_button": "show",
      "in_test":true

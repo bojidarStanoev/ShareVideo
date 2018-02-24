@@ -12,4 +12,5 @@ end
 
 get "/extension" do
   "Hello User!"
+  erb :webExtension
 end
