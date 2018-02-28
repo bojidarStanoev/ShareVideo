@@ -1,9 +1,10 @@
 require 'sinatra'
 require 'rubygems'
 require './config/init.rb'
+require_relative 'youtubeSearch'
 
-# NOTE: ENV variables should be set directly in terminal for testing on localhost
-
+# NOTE: ENV variabvles should be set directly in terminal for testing on localhost
+@videos = " "
 # Talk to Facebook
 get '/webhook' do 
  puts params
@@ -11,6 +12,8 @@ get '/webhook' do
 end
 
 get "/extension" do
-  "Hello User!"
+  puts params
+  @videos = SearchYoutube.new.find_video(params['SearchVideo'],false) 
+  puts @videos
   erb :webExtension
 end

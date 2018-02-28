@@ -44,7 +44,7 @@ def  find_video(search,random_or_not)
        search_response.data.items.each do |search_result|
       
         
-          videos << "https://www.youtube.com/watch?v=" + "#{search_result.id.videoId}"
+          videos << "https://www.youtube.com/embed/" + "#{search_result.id.videoId}"
         
       end
     
