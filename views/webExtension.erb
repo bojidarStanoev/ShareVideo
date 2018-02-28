@@ -1,11 +1,61 @@
 <% require_relative '../youtubeSearch' %>
-
-
+<% require 'json' %>
 
 <head>
 <title>VideoShare</title>
 </head>
 <body>
+
+   <script> 
+
+   (function(d, s, id){
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "https://connect.facebook.com/en_US/messenger.Extensions.js";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'Messenger'));
+
+window.extAsyncInit = function() {
+   
+
+};
+
+function share(){
+	var video_url = <%= @videos.first.to_json %>
+console.log(video_url)
+  message = {
+  "attachment":{
+    "type":"template",
+    "payload":{
+      "template_type":"generic",
+      "elements": [{
+        "title":"sharevideo",
+        "default_action":{
+          "type":"web_url",
+          "url": video_url
+        },
+        "buttons":[{
+          "type":"web_url",
+          "url": video_url,
+          "title":"Play on YouTube",
+          "messenger_extensions": true
+        }]
+      }]
+    }
+  }
+};
+console.log(message)
+MessengerExtensions.beginShareFlow(function(share_response) {
+ alert("loaded")
+}, 
+function(errorCode, errorMessage) {
+console.log(errorMessage)      
+
+},message,"current_thread");
+}
+   </script>
+
  <form >
   Search Video <br>
   <input type = "text" name = "SearchVideo" ><br>
@@ -19,4 +69,6 @@
 			</iframe>
     <% end %>
 <% end %>
+  
+   <button onclick="share()">Share video</button> 
 </body>
