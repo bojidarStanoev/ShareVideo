@@ -21,8 +21,8 @@ window.extAsyncInit = function() {
 
 };
 
-function share(){
-	var video_url = <%= @videos.first.to_json %>
+function share(arrayindex){
+	var video_url = <%= @videos.to_json %>
 console.log(video_url)
   message = {
   "attachment":{
@@ -33,11 +33,11 @@ console.log(video_url)
         "title":"sharevideo",
         "default_action":{
           "type":"web_url",
-          "url": video_url
+          "url": video_url[arrayindex]
         },
         "buttons":[{
           "type":"web_url",
-          "url": video_url,
+          "url": video_url[arrayindex],
           "title":"Play on YouTube",
           "messenger_extensions": true
         }]
@@ -62,13 +62,12 @@ console.log(errorMessage)
   
   <input type = "submit" value = "Search">
 </form> 
-<%	if !@videos.empty? %>
-	<% @videos.each do |video| %>
-    	<iframe width="420" height="315"
-		src=<%=video%>>
-			</iframe>
-    <% end %>
-<% end %>
+
+ <img src=<%=@thumbnails[0]%> onclick="share(0)"> 
+ <img src=<%=@thumbnails[1]%> onclick="share(1)">
+ <img src=<%=@thumbnails[2]%> onclick="share(2)">
+ <img src=<%=@thumbnails[3]%> onclick="share(3)">
+ <img src=<%=@thumbnails[4]%> onclick="share(4)">
   
-   <button onclick="share()">Share video</button> 
+   <button onclick="share(0)">Share video</button> 
 </body>

@@ -24,7 +24,6 @@ session.add_message(Message.create("text": "starting sessions", date: Time.new).
 session.save
 
 
-
   
 
   
@@ -63,7 +62,7 @@ Bot.on :message do |message|
   
   elsif normal_msg.split(' ').first == "search"
     search = normal_msg.split(' ')[1..-1].join(' ')
-      get_search_res = SearchYoutube.new.find_video(search,false).first
+      get_search_res,thumbnails = SearchYoutube.new.find_video(search,false,false).first
       puts get_search_res
        message.reply( attachment: {
                       "type": "template",
@@ -80,8 +79,8 @@ Bot.on :message do |message|
      
     elsif search_random.include?(normal_msg.split(' ').first)
       search = normal_msg.split(' ')[1..-1].join(' ')
-      get_search_res = find_video(search,true)
-      puts get_search_res = SearchYoutube.new.get_search_res[Random.rand(0...14)]
+      get_search_res,thumbnails = SearchYoutube.new.find_video(search,true,false)
+      puts get_search_res = get_search_res[Random.rand(0...14)]
       message.reply(
   attachment: {
     "type": "template",
@@ -194,7 +193,7 @@ get_started: {
     payload: 'GET_STARTED_PAYLOAD'
   },
    "home_url": {
-     "url": "https://2c21d520.ngrok.io/extension",#change ngrok url on every computer start/restart + whitelist it on the FB app page
+     "url": "https://3758236e.ngrok.io/extension",#change ngrok url on every computer start/restart + whitelist it on the FB app page
      "webview_height_ratio": "tall",
      "webview_share_button": "show",
      "in_test":true

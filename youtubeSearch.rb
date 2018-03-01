@@ -18,11 +18,13 @@ end
 
 
 
-def  find_video(search,random_or_not)
+def  find_video(search,random_or_not,extension_search)
 
-  if(random_or_not == true)
+  if random_or_not == true
     max_res = 15
 
+  elsif extension_search == true
+    max_res = 5
   else
     max_res = 1
   end
@@ -40,16 +42,15 @@ def  find_video(search,random_or_not)
     )
 
     videos = []
+    thumbnails = []
 
        search_response.data.items.each do |search_result|
-      
-        
           videos << "https://www.youtube.com/embed/" + "#{search_result.id.videoId}"
-        
+           thumbnails <<  "#{search_result.snippet.thumbnails.high.url}"
       end
     
 
-   return videos 
+   return videos,thumbnails 
 end
 
 def get_most_popular(region)
