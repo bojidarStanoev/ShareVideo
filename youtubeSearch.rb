@@ -3,7 +3,7 @@ class SearchYoutube
 DEVELOPER_KEY = 'AIzaSyAk0bdRE1Uw3O07roXwWBZyStsM-TXmkVA'
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
-
+Youtube_Url = "https://www.youtube.com/embed/"
 def get_service
   client = Google::APIClient.new(
     :key => DEVELOPER_KEY,
@@ -45,7 +45,7 @@ def  find_video(search,random_or_not,extension_search)
     thumbnails = []
 
        search_response.data.items.each do |search_result|
-          videos << "https://www.youtube.com/embed/" + "#{search_result.id.videoId}"
+          videos << Youtube_Url + "#{search_result.id.videoId}"
            thumbnails <<  "#{search_result.snippet.thumbnails.high.url}"
       end
     
@@ -71,7 +71,7 @@ mostpopular = []
 
   search_response.data.items.each do |popular_res|
       
-          mostpopular << "https://www.youtube.com/watch?v=" + "#{popular_res.id}"        
+          mostpopular << Youtube_Url + "#{popular_res.id}"        
   end
 
     return mostpopular

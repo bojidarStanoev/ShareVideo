@@ -174,6 +174,12 @@ def get_user_data(id)
 end
 
 def set_getStarted_and_consistent_menu
+  
+  Facebook::Messenger::Profile.set({
+     "whitelisted_domains":[
+        ENV["NGROK_URL"]     
+      ]
+    }, access_token: ENV['ACCESS_TOKEN'])
   Facebook::Messenger::Profile.set({
   persistent_menu: [
     {
@@ -192,8 +198,9 @@ def set_getStarted_and_consistent_menu
 get_started: {
     payload: 'GET_STARTED_PAYLOAD'
   },
+  
    "home_url": {
-     "url": "https://3758236e.ngrok.io/extension",#change ngrok url on every computer start/restart + whitelist it on the FB app page
+     "url": ENV["NGROK_URL"],
      "webview_height_ratio": "tall",
      "webview_share_button": "show",
      "in_test":true
