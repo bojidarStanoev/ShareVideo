@@ -9,11 +9,10 @@ require 'sequel'
 require_relative 'bot_commands_help'
 require_relative 'youtubeSearch'
 
-# NOTE: ENV variables should be set directly in terminal for testing on localhost
 
-# Subcribe bot to your page
+
+
 Facebook::Messenger::Subscriptions.subscribe(access_token: ENV["ACCESS_TOKEN"])
-# Set DEVELOPER_KEY to the API
 hello_init = ["hi","hello","zdr"]
 search_random = ["searchrnd","srcrnd","searchrandom"]
 help = ["help?","?","help"]
