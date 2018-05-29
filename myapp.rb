@@ -4,12 +4,14 @@ require './config/init.rb'
 require_relative 'youtubeSearch'
 
 
-@videos = " "
+
 
 
 get '/webhook' do 
  puts params
-  params['hub.challenge'] if ENV["VERIFY_TOKEN"] == params['hub.verify_token']
+   if ENV["VERIFY_TOKEN"] == params['hub.verify_token']
+   		params['hub.challenge']
+   end
 end
 
 get "/extension" do

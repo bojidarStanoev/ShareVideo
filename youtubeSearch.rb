@@ -1,3 +1,5 @@
+require 'google/api_client'
+
 class SearchYoutube 
 
 DEVELOPER_KEY = 'AIzaSyAk0bdRE1Uw3O07roXwWBZyStsM-TXmkVA'

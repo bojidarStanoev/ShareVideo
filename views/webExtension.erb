@@ -17,6 +17,7 @@ window.extAsyncInit = function() {
 };
 function share(arrayindex){
 	var video_url = <%= @videos.to_json %>
+  var thumbnail_url = <%= @thumbnails.to_json %>
 console.log(video_url)
    message = {
   "attachment":{
@@ -25,6 +26,7 @@ console.log(video_url)
       "template_type":"generic",
       "elements": [{
         "title":"Play on messenger",
+        "image_url": thumbnail_url[arrayindex],
         "subtitle": "Play Video",
         "default_action":{
           "type":"web_url",
@@ -37,7 +39,7 @@ console.log(video_url)
 };
 console.log(message)
 MessengerExtensions.beginShareFlow(function success(share_response) {
- alert("loaded")
+ 
 }, 
 function(errorCode, errorMessage) {
 alert(errorCode)
@@ -60,5 +62,5 @@ alert(errorMessage)
  <img src=<%=@thumbnails[3]%> onclick="share(3)">
  <img src=<%=@thumbnails[4]%> onclick="share(4)">
   
-   <button onclick="share(0)">Share video</button> 
+   
 </body>

@@ -11,32 +11,25 @@ require_relative 'youtubeSearch'
 
 
 
-
 Facebook::Messenger::Subscriptions.subscribe(access_token: ENV["ACCESS_TOKEN"])
+
 hello_init = ["hi","hello","zdr"]
 search_random = ["searchrnd","srcrnd","searchrandom"]
 help = ["help?","?","help"]
-session_mes = []
+
 User.unrestrict_primary_key
 session = Session.create(date: Time.new)
 session.add_message(Message.create("text": "starting sessions", date: Time.new).id)
 session.save
 
 
-  
-
-  
-
 Bot.on :message do |message|
 
   puts "Received '#{message.inspect}' from #{message.sender}"
-
   
-
-  puts session_mes
   last_mes = session.messages_dataset.order(:date).last
 
-   if Time.new - Time.parse(last_mes.date) > 120 
+   if Time.new - Time.parse(last_mes.date) > 3600 
     session.save
     session = Session.create(date: message.sent_at)
     session.set(user_id: message.sender["id"])
@@ -51,7 +44,8 @@ Bot.on :message do |message|
    mes = Message.create("text": normal_msg, date: message.sent_at)
  
    session.add_message(mes.id)
-  if !is_text_message(message)
+   
+  if is_text_message(message)
 
     message.reply(text: "only send text please")
   
@@ -156,13 +150,13 @@ end
 
 
 def normalize(message)
-  if is_text_message(message)
+  if !is_text_message(message)
     message = message.text.downcase
   end
 end
 
 def is_text_message(message)
-  !message.text.nil?
+  message.text.nil?
 end
 
 
