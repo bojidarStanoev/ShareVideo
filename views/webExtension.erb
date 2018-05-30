@@ -18,6 +18,7 @@ window.extAsyncInit = function() {
 function share(arrayindex){
 	var video_url = <%= @videos.to_json %>
   var thumbnail_url = <%= @thumbnails.to_json %>
+  var title = <%= @titles.to_json %>
 console.log(video_url)
    message = {
   "attachment":{
@@ -25,9 +26,9 @@ console.log(video_url)
     "payload":{
       "template_type":"generic",
       "elements": [{
-        "title":"Play on messenger",
+        "title": title[arrayindex],
         "image_url": thumbnail_url[arrayindex],
-        "subtitle": "Play Video",
+        "subtitle":"Play Video",
         "default_action":{
           "type":"web_url",
           "url": video_url[arrayindex]

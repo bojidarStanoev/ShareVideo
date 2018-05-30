@@ -13,10 +13,10 @@ require_relative 'youtubeSearch'
 
 Facebook::Messenger::Subscriptions.subscribe(access_token: ENV["ACCESS_TOKEN"])
 
-hello_init = ["hi","hello","zdr"]
+hello_init = ["hi","hello"]
 search_random = ["searchrnd","srcrnd","searchrandom"]
 help = ["help?","?","help"]
-
+session_period = 3600 #seconds
 User.unrestrict_primary_key
 session = Session.create(date: Time.new)
 session.add_message(Message.create("text": "starting sessions", date: Time.new).id)
@@ -29,7 +29,7 @@ Bot.on :message do |message|
   
   last_mes = session.messages_dataset.order(:date).last
 
-   if Time.new - Time.parse(last_mes.date) > 3600 
+   if Time.new - Time.parse(last_mes.date) > session_period 
     session.save
     session = Session.create(date: message.sent_at)
     session.set(user_id: message.sender["id"])
@@ -55,7 +55,7 @@ Bot.on :message do |message|
   
   elsif normal_msg.split(' ').first == "search"
     search = normal_msg.split(' ')[1..-1].join(' ')
-      get_search_res,thumbnails = SearchYoutube.new.find_video(search,false,false).first
+      get_search_res,thumbnails,titles = SearchYoutube.new.find_video(search,false,false).first
       puts get_search_res
        message.reply( attachment: {
                       "type": "template",
@@ -72,7 +72,7 @@ Bot.on :message do |message|
      
     elsif search_random.include?(normal_msg.split(' ').first)
       search = normal_msg.split(' ')[1..-1].join(' ')
-      get_search_res,thumbnails = SearchYoutube.new.find_video(search,true,false)
+      get_search_res,thumbnails,titles = SearchYoutube.new.find_video(search,true,false)
       puts get_search_res = get_search_res[Random.rand(0...14)]
       message.reply(
   attachment: {
@@ -99,7 +99,7 @@ Bot.on :message do |message|
 
         else
          
-            if normal_msg.split(' ')[2] == "to" && normal_msg.split(' ')[3].to_i != nil && normal_msg.split(' ')[3].to_i > 1 && normal_msg.split(' ')[3].to_i < 20
+            if normal_msg.split(' ')[2] == "to" && normal_msg.split(' ')[3].to_i != nil && normal_msg.split(' ')[3].to_i > 1 && normal_msg.split(' ')[3].to_i < 30
               starting_video = normal_msg.split(' ')[1].to_i - 1
               ending_video = normal_msg.split(' ')[3].to_i - 1
               most_popular_arr = SearchYoutube.new.get_most_popular(get_user_data(message.sender["id"])["locale"])

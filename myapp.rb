@@ -17,7 +17,7 @@ end
 get "/extension" do
   puts params
   @arrindex = 0
-  @videos,@thumbnails = SearchYoutube.new.find_video(params['SearchVideo'],false,true) 
+  @videos,@thumbnails,@titles = SearchYoutube.new.find_video(params['SearchVideo'],false,true) 
   puts @videos
   erb :webExtension
 end

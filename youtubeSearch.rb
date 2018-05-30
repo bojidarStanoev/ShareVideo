@@ -5,13 +5,13 @@ class SearchYoutube
 DEVELOPER_KEY = 'AIzaSyAk0bdRE1Uw3O07roXwWBZyStsM-TXmkVA'
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
-Youtube_Url = "https://www.youtube.com/embed/"
+Youtube_Url = "https://www.youtube.com/watch?v="
 def get_service
   client = Google::APIClient.new(
     :key => DEVELOPER_KEY,
     :authorization => nil,
-    :application_name => $PROGRAM_NAME,
-    :application_version => '1.0.0'
+    :application_name => "shareVideo",
+    :application_version => "1.0.0"
   )
   youtube = client.discovered_api(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION)
 
@@ -45,14 +45,15 @@ def  find_video(search,random_or_not,extension_search)
 
     videos = []
     thumbnails = []
-
+    titles = []
        search_response.data.items.each do |search_result|
           videos << Youtube_Url + "#{search_result.id.videoId}"
            thumbnails <<  "#{search_result.snippet.thumbnails.high.url}"
+           titles <<  "#{search_result.snippet.title}"
       end
     
 
-   return videos,thumbnails 
+   return videos,thumbnails,titles 
 end
 
 def get_most_popular(region)
@@ -65,7 +66,7 @@ search_response = client.execute!(
         :part => 'snippet',
         :chart => 'mostPopular',
         :regionCode => region,
-        :maxResults => '20'
+        :maxResults => '30'
       }
     )
 
